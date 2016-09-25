@@ -1,34 +1,53 @@
 $(document).ready(function() {
 
-  var circleRadius = 1
-  var outerHeight = 400
-  var outerWidth = 400
-  var innerHeight = outerHeight - 30
-  var innerWidth = outerWidth - 30
-  var xColumn = 'alcohol'
-  var yColumn = 'pH'
-  var type = 'type'
+  var margin = {left: 30,right: 30, top: 30, bottom: 30}
 
+  var circleRadius = 3
+  var outerHeight = 500
+  var outerWidth = 700
+  var innerHeight = outerHeight - margin.bottom
+  var innerWidth = outerWidth - margin.right
+  var xColumn = 'pH'
+  var yColumn = 'alcohol'
+  var winetype = 'type'
+
+  $('h2').html("Wine: " + xColumn + ' vs ' + yColumn)
   // Set up the svg space in the DOM
   var svg = d3.select('body').append('svg')
     .attr("height",outerHeight)
     .attr("width",outerWidth);
 
+  svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", outerWidth / 2)
+    .attr("y", outerHeight - (margin.bottom / 2))
+    .text(xColumn);
+
+  svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("y", margin.top/2)
+      .attr("x", -outerHeight /2)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text(yColumn);
+
+  var g = svg.append('g').attr('tranform', 'translate(400,20)')
   // create the range (pixel length attr) for the plot
   // NOTE: match with size of svg
   var xscale = d3.scale.linear().range([0,innerWidth])
   var yscale = d3.scale.linear().range([innerHeight,0])
-  //var colorscale = d3.scale.linear().range(['red', 'blue']);
-  var colorscale = d3.scale.category10()
-
-    // main fn to build the plt
+  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
+  // main fn to build the plt
   function render(data) {
+
     // set the domain (range of inputs)
     xscale.domain(d3.extent(data, function (d) {return d[xColumn]}))
     yscale.domain(d3.extent(data, function (d) {return d[yColumn]}))
-    //colorscale.domain([0,1])
+
     //Bind data points circle svg element
-    var circles = svg.selectAll('circle').data(data);
+    var circles = g.selectAll('circle').data(data);
 
     //Enter phase:
     circles.enter().append('circle').attr("r",circleRadius);
@@ -36,7 +55,7 @@ $(document).ready(function() {
     //Update phase:
     circles.attr('cx', function (d) { return xscale(d[xColumn])})
       .attr('cy', function (d) { return yscale(d[yColumn])})
-      .attr('fill', function (d) { return colorscale(d[type])})
+      .attr('fill', function (d) { return colorscale(d[winetype])})
 
     //Exit phase:
     circles.exit().remove();
@@ -49,7 +68,7 @@ $(document).ready(function() {
     d.pH = +d.pH
     d['citric acid'] = +d['citric acid']
     d.chlorides = +d.chlorides
-    return d;
+    return d
   }
 
   // reads in data, converts to float, renders on svg space in DOM
