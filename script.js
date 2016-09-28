@@ -5,10 +5,8 @@ $(document).ready(function() {
   var circleRadius = 3
   var outerHeight = 500
   var outerWidth = 700
-  var innerHeight = outerHeight - margin.bottom
-  var innerWidth = outerWidth - margin.right
-  console.log(innerWidth)
-  console.log(innerHeight)
+  var innerHeight = outerHeight - margin.bottom - margin.top // 420
+  var innerWidth = outerWidth - margin.right - margin.left // 620
 
   var xColumn = 'pH'
   var yColumn = 'alcohol'
@@ -20,6 +18,28 @@ $(document).ready(function() {
     .attr("height",outerHeight)
     .attr("width",outerWidth);
 
+  // create the range (pixel length attr) for the plot
+  // NOTE: match with size of svg
+  var xscale = d3.scale.linear().range([0,innerWidth])
+  var yscale = d3.scale.linear().range([innerHeight, 0])
+  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
+
+  var g = svg.append('g')
+    .attr("height",innerHeight)
+    .attr("width",innerWidth)
+    .attr('tranform','translate(30,40)')
+    //$('svg').css('border','solid')
+    //.attr('tranform', 'translate('+margin.left+',-4'+margin.top+')')
+
+  /*
+  var xAxisG = g.append('g').attr('tranform', 'translate(0,'+innerHeight+')')
+  var yAxisG = g.append('g')
+
+  var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
+  var yAxis = d3.svg.axis().scale(yscale).orient('left')
+  */
+
+  // labels
   svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
@@ -36,18 +56,6 @@ $(document).ready(function() {
       .attr("transform", "rotate(-90)")
       .text(yColumn);
 
-  // create the range (pixel length attr) for the plot
-  // NOTE: match with size of svg
-  var xscale = d3.scale.linear().range([0,innerWidth])
-  var yscale = d3.scale.linear().range([innerHeight, 0])
-  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
-
-  var g = svg.append('g').attr('tranform', 'translate('+margin.left+','+margin.top+')')
-  var xAxisG = g.append('g').attr('tranform', 'translate(0,'+innerHeight+')')
-  var yAxisG = g.append('g')
-
-  var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
-  var yAxis = d3.svg.axis().scale(yscale).orient('left')
 
   // main fn to build the plt
   function render(data) {
@@ -56,8 +64,8 @@ $(document).ready(function() {
     xscale.domain(d3.extent(data, function (d) {return d[xColumn]}))
     yscale.domain(d3.extent(data, function (d) {return d[yColumn]}))
 
-    xAxisG.call(xAxis);
-    yAxisG.call(yAxis);
+    // xAxisG.call(xAxis);
+    // yAxisG.call(yAxis);
 
     //Bind data points circle svg element
     var circles = g.selectAll('circle').data(data);
