@@ -1,12 +1,19 @@
 $(document).ready(function() {
 
-  var margin = {left: 50,right: 30, top: 30, bottom: 50}
+  var margin = {left: 30, right: 30, top: 30, bottom: 30}
 
   var circleRadius = 3
   var outerHeight = 500
   var outerWidth = 700
+<<<<<<< HEAD
   var innerHeight = outerHeight - margin.bottom - margin.top // 420
   var innerWidth = outerWidth - margin.right - margin.left // 620
+=======
+  var innerHeight = outerHeight - margin.bottom - margin.bottom
+  var innerWidth = outerWidth - margin.right - margin.right
+  console.log(innerWidth)
+  console.log(innerHeight)
+>>>>>>> origin/master
 
   var xColumn = 'pH'
   var yColumn = 'alcohol'
@@ -15,9 +22,10 @@ $(document).ready(function() {
   $('h2').html("Plot: " + xColumn + ' vs ' + yColumn)
   // Set up the svg space in the DOM
   var svg = d3.select('body').append('svg')
-    .attr("height",outerHeight)
-    .attr("width",outerWidth);
+    .attr("height", outerHeight)
+    .attr("width", outerWidth)
 
+<<<<<<< HEAD
   // create the range (pixel length attr) for the plot
   // NOTE: match with size of svg
   var xscale = d3.scale.linear().range([0,innerWidth])
@@ -40,6 +48,14 @@ $(document).ready(function() {
   */
 
   // labels
+=======
+  // var g = svg.append('g').attr('tranform', 'translate('+margin.left+','+margin.top+')')
+  var g = svg.append('g').attr('style', 'transform:translate(100,250)')
+  var xAxisG = g.append('g').attr('tranform', 'translate(0,'+innerHeight+')').attr('style','border:double')
+  var yAxisG = g.append('g').attr('style','border:dotted')
+
+  /*
+>>>>>>> origin/master
   svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
@@ -55,7 +71,20 @@ $(document).ready(function() {
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
       .text(yColumn);
+<<<<<<< HEAD
 
+=======
+      */
+  // create the range (pixel length attr) for the plot
+  // NOTE: match with size of svg
+  var xscale = d3.scale.linear().range([0,innerWidth])
+  var yscale = d3.scale.linear().range([innerHeight, 0])
+  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
+
+
+  var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
+  var yAxis = d3.svg.axis().scale(yscale).orient('left')
+>>>>>>> origin/master
 
   // main fn to build the plt
   function render(data) {
