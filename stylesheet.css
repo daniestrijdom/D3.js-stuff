@@ -8,3 +8,7 @@ html {
     stroke: black;
     shape-rendering: crispEdges;
 }
+
+.legend {
+  border: solid;
+}

@@ -1,73 +1,76 @@
 $(document).ready(function() {
 
-  var margin = {left: 80, right: 20, top: 30, bottom: 100}
-
-  var circleRadius = 3
+  // CONSTANTS
+  var margin = {
+    left: 80,
+    right: 20,
+    top: 30,
+    bottom: 100,
+    legendx : 500,
+    legendy : 20
+  }
+  var circleRadius = 2
   var outerHeight = 500
   var outerWidth = 700
-<<<<<<< HEAD
-  var innerHeight = outerHeight - margin.top - margin.bottom
-  var innerWidth = outerWidth - margin.left - margin.right
-=======
-<<<<<<< HEAD
   var innerHeight = outerHeight - margin.bottom - margin.top // 420
   var innerWidth = outerWidth - margin.right - margin.left // 620
-=======
-  var innerHeight = outerHeight - margin.bottom - margin.bottom
-  var innerWidth = outerWidth - margin.right - margin.right
-  console.log(innerWidth)
-  console.log(innerHeight)
->>>>>>> origin/master
->>>>>>> origin/master
 
-  var xColumn = 'chlorides'
-  var yColumn = 'pH'
+  // TODO: Set these as buttons
+  var xColumn = 'density'
+  var yColumn = 'alcohol'
   var winetype = 'type'
 
+  // RENDER APPROPRIATE HEADER
   $('h2').html("Plot: " + xColumn + ' vs ' + yColumn)
 
-  // Set up the svg space in the DOM
+
+  // APPEND SVG CANVAS, G, TO BODY
   var svg = d3.select('body').append('svg')
     .attr("height", outerHeight)
     .attr("width", outerWidth)
 
-<<<<<<< HEAD
   var g = svg.append('g')
             .attr('transform','translate('+margin.left+','+margin.top+')')
 
-=======
-<<<<<<< HEAD
-  // create the range (pixel length attr) for the plot
+  // set the range (pixel length attr) for the plot
   // NOTE: match with size of svg
   var xscale = d3.scale.linear().range([0,innerWidth])
   var yscale = d3.scale.linear().range([innerHeight, 0])
-  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
 
-  var g = svg.append('g')
-    .attr("height",innerHeight)
-    .attr("width",innerWidth)
-    .attr('tranform','translate(30,40)')
-    //$('svg').css('border','solid')
-    //.attr('tranform', 'translate('+margin.left+',-4'+margin.top+')')
+  // Chart legend
+  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.1)','rgba(255,0,0,0.1)'])
+  var legend = g.append('g')
+                .attr('transform','translate('+margin.legendx+','+margin.legendy+')')
+                .attr('class','legend')
 
-  /*
-  var xAxisG = g.append('g').attr('tranform', 'translate(0,'+innerHeight+')')
-  var yAxisG = g.append('g')
+  legend.append('text')
+    .attr('x',20)
+    .attr('y',20)
+    .attr("text-anchor", "start")
+    .text('RED')
 
-  var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
-  var yAxis = d3.svg.axis().scale(yscale).orient('left')
-  */
+  legend.append('rect')
+    .attr('x',0)
+    .attr('y',8)
+    .attr('width',15)
+    .attr('height',15)
+    .attr('fill','rgba(255,0,0,0.3)')
 
-  // labels
-=======
-  // var g = svg.append('g').attr('tranform', 'translate('+margin.left+','+margin.top+')')
-  var g = svg.append('g').attr('style', 'transform:translate(100,250)')
-  var xAxisG = g.append('g').attr('tranform', 'translate(0,'+innerHeight+')').attr('style','border:double')
-  var yAxisG = g.append('g').attr('style','border:dotted')
+  legend.append('text')
+    .attr('x',20)
+    .attr('y',40)
+    .attr("text-anchor", "start")
+    .text('WHITE')
 
-  /*
->>>>>>> origin/master
->>>>>>> origin/master
+  legend.append('rect')
+    .attr('x',0)
+    .attr('y',28)
+    .attr('width',15)
+    .attr('height',15)
+    .attr('fill','rgba(0,255,155,0.3)')
+
+
+  // AXIS LABELS
   svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
@@ -82,38 +85,22 @@ $(document).ready(function() {
       .attr("x", -innerHeight /2)
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
-<<<<<<< HEAD
       .text(yColumn.toUpperCase());
 
-=======
-      .text(yColumn);
-<<<<<<< HEAD
-
-=======
-      */
->>>>>>> origin/master
-  // create the range (pixel length attr) for the plot
-  // NOTE: match with size of svg
-  var xscale = d3.scale.linear().range([0,innerWidth])
-  var yscale = d3.scale.linear().range([innerHeight, 0])
-  var colorscale = d3.scale.linear().range(['rgba(0,255,155,0.3)','rgba(255,0,0,0.3)'])
-
+  // CREATE SCALE OBJECTS
   var yAxis = d3.svg.axis().scale(yscale).orient('left')
-<<<<<<< HEAD
   var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
 
-=======
->>>>>>> origin/master
->>>>>>> origin/master
-
-  // main fn to build the plt
+  // CHART RENDERING FUNCTION (KEEP GENERIC AS POSSIBLE)
   function render(data) {
 
-    // set the domain (range of inputs)
+    // set the domains
     xscale.domain(d3.extent(data, function (d) {return d[xColumn]}))
     yscale.domain(d3.extent(data, function (d) {return d[yColumn]}))
 
-<<<<<<< HEAD
+    // CREATE AXIS GROUPS AND APPEND AXIS OBJECTS
+    // THIS IS INSIDE THE RENDERING FN BC DATA NEEDS TO BE AVAILABLE
+    // FOR US TO CALL AXIS OBJECTS ON GROUPS
     var xAxisG = g.append('g')
                   .attr('transform', 'translate(0,'+innerHeight+')')
                   .attr('class','axis')
@@ -122,33 +109,32 @@ $(document).ready(function() {
                   .attr('class','axis')
                   .call(yAxis)
 
-=======
-    // xAxisG.call(xAxis);
-    // yAxisG.call(yAxis);
->>>>>>> origin/master
-
-    //Bind data points circle svg element
+    // NB: BIND DATA POINTS TO CIRCLE OBJECTS
     var circles = g.selectAll('circle').data(data);
 
-    //Enter phase:
+    // NB: Enter phase:
     circles.enter().append('circle').attr("r",circleRadius);
 
-    //Update phase:
+    // NB: Update phase:
     circles.attr('cx', function (d) { return xscale(d[xColumn])})
       .attr('cy', function (d) { return yscale(d[yColumn])})
       .attr('fill', function (d) { return colorscale(d[winetype])})
 
-    //Exit phase:
+    // NB: Exit phase:
     circles.exit().remove();
   }
 
+  // TODO: loop though all headers
   // takes data points from strings to floats
+
   function type (d) {
-    d.quality = +d.quality
+
+    var features = d3.keys(d);
     d.alcohol = +d.alcohol
-    d.pH = +d.pH
-    d['citric acid'] = +d['citric acid']
-    d.chlorides = +d.chlorides
+    for (feature in features) {
+      d[feature] = +d[feature]
+    }
+
     return d
   }
 
