@@ -15,14 +15,13 @@ $(document).ready(function() {
   var innerHeight = outerHeight - margin.bottom - margin.top // 420
   var innerWidth = outerWidth - margin.right - margin.left // 620
 
-  // TODO: Set these as buttons
-  var xColumn = 'density'
-  var yColumn = 'alcohol'
+  // Values at load
+  var xColumn = 'alcohol'
+  var yColumn = 'pH'
   var winetype = 'type'
 
   // RENDER APPROPRIATE HEADER
-  $('h2').html("Plot: " + xColumn + ' vs ' + yColumn)
-
+  $('h2').html("Select feature & click 'Render' to begin")
 
   // APPEND SVG CANVAS, G, TO BODY
   var svg = d3.select('body').append('svg')
@@ -54,7 +53,7 @@ $(document).ready(function() {
     .attr('y',8)
     .attr('width',15)
     .attr('height',15)
-    .attr('fill','rgba(255,0,0,0.3)')
+    .attr('fill','rgba(255,0,0,0.4)')
 
   legend.append('text')
     .attr('x',20)
@@ -67,19 +66,19 @@ $(document).ready(function() {
     .attr('y',28)
     .attr('width',15)
     .attr('height',15)
-    .attr('fill','rgba(0,255,155,0.3)')
+    .attr('fill','rgba(0,255,155,0.4)')
 
 
   // AXIS LABELS
   svg.append("text")
-    .attr("class", "x label")
+    .attr("class", "x-label")
     .attr("text-anchor", "end")
     .attr("x", outerWidth / 2)
     .attr("y", outerHeight - (margin.bottom / 2))
     .text(xColumn.toUpperCase());
 
   svg.append("text")
-      .attr("class", "y label")
+      .attr("class", "y-label")
       .attr("text-anchor", "end")
       .attr("y", margin.top/2)
       .attr("x", -innerHeight /2)
@@ -90,6 +89,35 @@ $(document).ready(function() {
   // CREATE SCALE OBJECTS
   var yAxis = d3.svg.axis().scale(yscale).orient('left')
   var xAxis = d3.svg.axis().scale(xscale).orient('bottom')
+
+  function getColumns(data) {
+    var result = d3.keys(data[0]).slice(1,- 2)
+    var xAxisMenu = 'X-axis: <select id="xAxisValue">'
+    var yAxisMenu = 'Y-axis: <select id="yAxisValue">'
+    for (var i in result) {
+      xAxisMenu += "<option value='"+result[i]+"'>"+result[i]+"</option>"
+      yAxisMenu += "<option value='"+result[i]+"'>"+result[i]+"</option>"
+    }
+
+    xAxisMenu += "</select>"
+    yAxisMenu += "</select>"
+    str = xAxisMenu +'<br>'+ yAxisMenu + $('#settings').html()
+    $('#settings').html(str)
+
+
+    $('#renderButton').on('click', function() {
+      d3.selectAll('.axis').remove()
+      xColumn = $('#xAxisValue').val()
+      yColumn = $('#yAxisValue').val()
+      $('.x-label').html(xColumn.toUpperCase())
+      $('.y-label').html(yColumn.toUpperCase())
+      d3.csv('wine-all.csv', type, render)
+      $('h2').html("Plot: " + xColumn + ' vs ' + yColumn)
+
+    })
+  }
+
+
 
   // CHART RENDERING FUNCTION (KEEP GENERIC AS POSSIBLE)
   function render(data) {
@@ -122,7 +150,8 @@ $(document).ready(function() {
 
     // NB: Exit phase:
     circles.exit().remove();
-  }
+
+    }
 
   // TODO: loop though all headers
   // takes data points from strings to floats
@@ -130,6 +159,7 @@ $(document).ready(function() {
   function type (d) {
 
     var features = d3.keys(d);
+    //this doesnt make sense
     d.alcohol = +d.alcohol
     for (feature in features) {
       d[feature] = +d[feature]
@@ -139,5 +169,6 @@ $(document).ready(function() {
   }
 
   // reads in data, converts to float, renders on svg space in DOM
+  d3.csv('wine-all.csv',getColumns)
   d3.csv('wine-all.csv', type, render)
 });
