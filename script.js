@@ -169,6 +169,6 @@ $(document).ready(function() {
   }
 
   // reads in data, converts to float, renders on svg space in DOM
-  d3.csv('wine-all.csv',getColumns)
+  d3.csv('wine-all.csv', getColumns)
   d3.csv('wine-all.csv', type, render)
 });
